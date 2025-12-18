@@ -219,11 +219,11 @@ const ClimateSimulator = () => {
                     </div>
 
                     {/* Row 2: Radar & Heatmap */}
-                    <div className="flex-none grid grid-cols-12 gap-3 h-64">
-                        <div className="col-span-8 h-full glass-panel rounded-xl p-0 animate-fade-in shadow-lg" style={{ animationDelay: '0.2s' }}>
+                    <div className="flex-none grid grid-cols-12 gap-3 h-80">
+                        <div className="col-span-7 h-full glass-panel rounded-xl p-0 animate-fade-in shadow-lg" style={{ animationDelay: '0.2s' }}>
                             <ImpactHeatmap cells={outputs?.heatmap} />
                         </div>
-                        <div className="col-span-4 h-full glass-panel rounded-xl p-6 flex flex-col items-center animate-fade-in shadow-lg" style={{ animationDelay: '0.3s' }}>
+                        <div className="col-span-5 h-full glass-panel rounded-xl p-6 flex flex-col items-center animate-fade-in shadow-lg" style={{ animationDelay: '0.3s' }}>
                             <h3 className="w-full text-[12px] font-black text-slate-500 uppercase tracking-[0.25em] mb-6">Balance</h3>
                             <RadarPlot scores={outputs?.scores} />
                         </div>

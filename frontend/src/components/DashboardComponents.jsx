@@ -116,7 +116,7 @@ export const ImpactHeatmap = ({ cells, rows = ['Economic', 'Environmental', 'Str
     };
 
     return (
-        <div className="h-full flex flex-col p-6 pb-100">
+        <div className="h-full flex flex-col p-6">
             <h3 className="text-[12px] font-black text-slate-500 uppercase tracking-[0.25em] mb-8">Impact Matrix</h3>
             <div className="flex-1 grid grid-cols-4 gap-x-4 gap-y-4">
                 {/* Header IPs */}
@@ -157,9 +157,9 @@ export const RadarPlot = ({ scores }) => {
             <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 w-full text-left">Balance</h3>
             <div className="flex-1 -ml-4">
                 <ResponsiveContainer width="100%" height="100%">
-                    <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
+                    <RadarChart cx="50%" cy="50%" outerRadius="90%" data={data}>
                         <PolarGrid stroke="#334155" />
-                        <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 600 }} />
+                        <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 800 }} />
                         <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
                         <Radar
                             name="Score"
@@ -230,23 +230,23 @@ export const DeepMetricsPanel = ({ details }) => {
     if (!details) return null;
 
     const MetricBox = ({ label, value, unit, color }) => (
-        <div className="bg-slate-800/20 rounded-lg p-5 border border-slate-700/30 flex flex-col items-center justify-center text-center group hover:bg-slate-800/40 transition-colors">
-            <span className="text-[9px] uppercase font-black text-slate-600 tracking-[0.25em] mb-2 group-hover:text-slate-500">{label}</span>
-            <div className={`text-2xl font-black ${color || 'text-slate-200'} tabular-nums leading-none`}>
-                {value}<span className="text-sm ml-1 font-black opacity-30">{unit}</span>
+        <div className="bg-slate-800/10 rounded-lg p-3.5 border border-slate-700/30 flex flex-col items-center justify-center text-center group hover:bg-slate-800/40 transition-colors">
+            <span className="text-[8px] uppercase font-black text-slate-600 tracking-[0.2em] mb-1.5 group-hover:text-slate-500 whitespace-nowrap">{label}</span>
+            <div className={`text-xl font-black ${color || 'text-slate-200'} tabular-nums leading-none`}>
+                {value}<span className="text-[10px] ml-0.5 font-black opacity-30">{unit}</span>
             </div>
         </div>
     );
 
     return (
-        <div className="h-full flex flex-col p-6 overflow-hidden">
-            <h3 className="text-[12px] font-black text-slate-500 uppercase tracking-[0.25em] mb-8">Deep Dive Indicators</h3>
+        <div className="h-full flex flex-col p-4 overflow-hidden">
+            <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mb-5">Deep Dive Indicators</h3>
 
-            <div className="flex-1 overflow-y-auto grid grid-cols-3 gap-8 customized-scrollbar pr-2">
+            <div className="flex-1 overflow-y-auto grid grid-cols-3 gap-5 customized-scrollbar pr-1">
                 {/* Financial */}
                 <div>
-                    <h4 className="text-[10px] font-black text-indigo-400/80 uppercase mb-4 tracking-[0.25em] border-l-4 border-indigo-500/40 pl-4">Financial Projection (5Y)</h4>
-                    <div className="grid grid-cols-1 gap-3">
+                    <h4 className="text-[9px] font-black text-indigo-400/80 uppercase mb-3 tracking-[0.2em] border-l-4 border-indigo-500/40 pl-3">Finance</h4>
+                    <div className="grid grid-cols-1 gap-2">
                         <MetricBox label="ROI" value={details.roi_percent.toFixed(1)} unit="%" color={details.roi_percent > 0 ? "text-emerald-400" : "text-rose-400"} />
                         <MetricBox label="Payback" value={details.payback_years.toFixed(1)} unit="Yrs" />
                         <MetricBox label="Viability" value={Math.round(details.financial_viability)} unit="/100" />
@@ -255,21 +255,21 @@ export const DeepMetricsPanel = ({ details }) => {
 
                 {/* Carbon */}
                 <div>
-                    <h4 className="text-[10px] font-black text-emerald-400/80 uppercase mb-4 tracking-[0.25em] border-l-4 border-emerald-500/40 pl-4">Carbon Impact</h4>
-                    <div className="grid grid-cols-1 gap-3">
+                    <h4 className="text-[9px] font-black text-emerald-400/80 uppercase mb-3 tracking-[0.2em] border-l-4 border-emerald-500/40 pl-3">Carbon</h4>
+                    <div className="grid grid-cols-1 gap-2">
                         <MetricBox label="Reduction" value={Math.round(details.carbon_reduction_tons)} unit="tCO2e" color="text-emerald-300" />
-                        <MetricBox label="Net Zero Progress" value={details.net_zero_progress.toFixed(1)} unit="%" />
+                        <MetricBox label="Net Zero" value={details.net_zero_progress.toFixed(1)} unit="%" />
                     </div>
                 </div>
 
                 {/* Risk */}
                 <div>
-                    <h4 className="text-[10px] font-black text-amber-400/80 uppercase mb-4 tracking-[0.25em] border-l-4 border-amber-500/40 pl-4">Risk Profile</h4>
-                    <div className="grid grid-cols-1 gap-3">
-                        <MetricBox label="Resilience Index" value={Math.round(details.resilience_index)} unit="Idx" color="text-amber-200" />
-                        <div className="bg-slate-800/20 rounded-lg p-5 border border-slate-700/30 flex flex-col items-center justify-center text-center">
-                            <span className="text-[9px] uppercase font-black text-slate-600 tracking-[0.25em] mb-2">Exec Risk</span>
-                            <div className={`text-sm font-black uppercase px-4 py-1.5 rounded-sm ${details.execution_risk_factor === 'High' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40' : (details.execution_risk_factor === 'Medium' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30')}`}>
+                    <h4 className="text-[9px] font-black text-amber-400/80 uppercase mb-3 tracking-[0.2em] border-l-4 border-amber-500/40 pl-3">Risk</h4>
+                    <div className="grid grid-cols-1 gap-2">
+                        <MetricBox label="Resilience" value={Math.round(details.resilience_index)} unit="Idx" color="text-amber-200" />
+                        <div className="bg-slate-800/10 rounded-lg p-3.5 border border-slate-700/30 flex flex-col items-center justify-center text-center">
+                            <span className="text-[8px] uppercase font-black text-slate-600 tracking-[0.2em] mb-1.5">Exec Risk</span>
+                            <div className={`text-xs font-black uppercase px-3 py-1 rounded-sm ${details.execution_risk_factor === 'High' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40' : (details.execution_risk_factor === 'Medium' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30')}`}>
                                 {details.execution_risk_factor}
                             </div>
                         </div>
