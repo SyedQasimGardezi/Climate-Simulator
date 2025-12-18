@@ -1,74 +1,77 @@
 from pydantic import BaseModel
-from typing import Optional, List, Dict
+from typing import List, Optional
 
-class ActivityBase(BaseModel):
-    date: str
-    category: str
-    subcategory: str
-    amount: float
-    unit: str
-    notes: Optional[str] = None
+# SME Simulator Models
 
-class ActivityCreate(ActivityBase):
-    pass
-
-class Activity(ActivityBase):
-    id: int
-    carbon_footprint: float
-    created_at: str
-
-    class Config:
-        from_attributes = True
-
-class Recommendation(BaseModel):
-    category: str
-    icon: str
-    title: str
-    description: str
-    potential_saving: float
-    priority: str
-
-class ClimateScenario(BaseModel):
-    # Energy Supply
-    coal_tax: float = 0.0 # -100 to 100 (Subsidized to Highly Taxed)
-    oil_tax: float = 0.0
-    gas_tax: float = 0.0
-    bioenergy_tax: float = 0.0
-    renewables_subsidy: float = 0.0
-    nuclear_subsidy: float = 0.0
-    new_tech_subsidy: float = 0.0
-    carbon_price: float = 0.0 # $/ton
-
-    # Transport
-    transport_efficiency: float = 0.0 # % increase
-    transport_electrification: float = 0.0 # % increase
-
-    # Buildings & Industry
-    buildings_efficiency: float = 0.0
-    buildings_electrification: float = 0.0
-
-    # Growth
-    population_growth: float = 0.0 # Low to High (-1 to 1)
-    economic_growth: float = 0.0
-
-    # Land & Emissions
-    deforestation: float = 0.0 # % reduction
-    methane_reduction: float = 0.0 # % reduction
-    afforestation: float = 0.0 # % increase
-
-    # Carbon Removal
-    technological_carbon_removal: float = 0.0 # % of max potential
-
-class ClimateProjection(BaseModel):
-    years: List[int]
-    global_temp: List[float]
-    co2_concentration: List[float]
+class SmeInputs(BaseModel):
+    # Basic - Economic (12 sliders)
+    capex: float = 30.0
+    opex: float = 0.0 # -50 to +50
+    annual_savings: float = 40.0
+    downtime: float = 20.0
     
-    # Energy Mix (Exajoules/year)
-    energy_coal: List[float]
-    energy_oil: List[float]
-    energy_gas: List[float]
-    energy_renewables: List[float]
-    energy_bio: List[float]
-    energy_nuclear: List[float]
-    energy_new_tech: List[float]
+    # Basic - Environmental
+    scope1: float = 25.0
+    scope2: float = 25.0
+    scope3: float = 20.0
+    waste: float = 20.0
+    
+    # Basic - Strategic
+    complexity: float = 30.0
+    supply_risk: float = 30.0
+    regulatory: float = 30.0
+    reputation: float = 25.0
+    
+    # Dropdowns
+    industry: str = "Manufacturing"
+    company_size: str = "SME"
+    region: str = "EU"
+
+    # Advanced - Economic
+    wacc: float = 30.0
+    payback_tolerance: float = 50.0
+    incentives: float = 20.0
+    price_premium: float = 15.0
+
+    # Advanced - Environmental
+    water: float = 10.0
+    material: float = 15.0
+    pollutants: float = 10.0
+    measurement_confidence: float = 30.0
+
+    # Advanced - Strategic
+    capability: float = 30.0
+    supplier_concentration: float = 40.0
+    lead_time: float = 35.0
+    stakeholder: float = 30.0
+
+class SmeScore(BaseModel):
+    economic: float
+    environmental: float
+    strategic: float
+    overall: float
+
+class HeatmapCell(BaseModel):
+    row: str # Economic, Environmental, Strategic
+    col: str # Upside, Risk, Feasibility
+    value: float
+    color: str # red, yellow, green
+
+class Alert(BaseModel):
+    message: str
+    severity: str # low, medium, high
+
+class SmeDeepIndicators(BaseModel):
+    financial_viability: float # NPV normalized
+    roi_percent: float
+    payback_years: float
+    carbon_reduction_tons: float
+    net_zero_progress: float
+    execution_risk_factor: str # High/Med/Low
+    resilience_index: float
+
+class SmeOutputs(BaseModel):
+    scores: SmeScore
+    heatmap: List[HeatmapCell]
+    alerts: List[Alert]
+    details: SmeDeepIndicators

@@ -1,21 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #10B981;
-  --color-secondary: #34D399;
-  --color-background: #F0FDF4;
-  --color-surface: #FFFFFF;
-  --color-text: #1F2937;
-  --color-muted: #6B7280;
-  --color-danger: #EF4444;
-  --color-warning: #F59E0B;
-  --color-success: #10B981;
+  --color-primary: #6366f1;
+  /* Indigo 500 */
+  --color-secondary: #0ea5e9;
+  /* Sky 500 */
+  --color-accent: #f59e0b;
+  /* Amber 500 */
 
-  --font-sans: Inter, sans-serif;
+  --color-background: #0f172a;
+  /* Slate 900 */
+  --color-surface: #1e293b;
+  /* Slate 800 */
+
+  --color-text: #f8fafc;
+  /* Slate 50 */
+  --color-text-muted: #94a3b8;
+  /* Slate 400 */
+
+  --font-sans: 'Outfit', sans-serif;
+
+  --animate-fade-in: fadeIn 0.5s ease-out;
 }
 
 @layer base {
   body {
-    @apply bg-background text-text font-sans antialiased;
+    @apply bg-slate-950 text-slate-50 font-sans antialiased selection:bg-indigo-500/30 selection:text-indigo-200 overflow-hidden;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-slate-800/40 backdrop-blur-xl border border-slate-700/50 shadow-xl;
+  }
+
+  .glass-card {
+    @apply bg-slate-800/60 backdrop-blur-md border border-slate-700/50 shadow-lg hover:border-slate-600 transition-all duration-300;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-700 rounded-full hover:bg-slate-600;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
