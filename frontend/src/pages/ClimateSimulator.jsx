@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { calculateSmeImpact } from '../services/api';
 import { SliderControl, ScoreCard, ImpactHeatmap, RadarPlot, AlertBox, DeepMetricsPanel } from '../components/DashboardComponents';
-import { ChevronDown, ChevronUp, Settings, Activity, Zap, BarChart3, Globe, Shield } from 'lucide-react';
+import { ChevronDown, ChevronUp, Settings, Activity, Zap, BarChart3, Globe, Shield, AlertTriangle, Info, CheckCircle, XCircle, CheckCircle2 } from 'lucide-react';
 
 const ClimateSimulator = () => {
     // -- Inputs State --
@@ -21,6 +21,20 @@ const ClimateSimulator = () => {
         // Advanced - Strategic
         capability: 30, supplier_concentration: 40, lead_time: 35, stakeholder: 30
     });
+
+    const presets = {
+        Baseline: { capex: 30, opex: 0, annual_savings: 40, scope1: 25, scope2: 25, scope3: 20, complexity: 30, reputation: 25, capability: 30 },
+        Conservative: { capex: 10, opex: 5, annual_savings: 15, scope1: 10, scope2: 10, scope3: 5, complexity: 10, reputation: 10, capability: 10 },
+        Balanced: { capex: 50, opex: 15, annual_savings: 60, scope1: 45, scope2: 40, scope3: 35, complexity: 50, reputation: 50, capability: 50 },
+        Aggressive: { capex: 85, opex: 30, annual_savings: 95, scope1: 90, scope2: 85, scope3: 80, complexity: 80, reputation: 90, capability: 90 }
+    };
+
+    const [activePreset, setActivePreset] = useState("Baseline");
+
+    const applyPreset = (name) => {
+        setActivePreset(name);
+        setInputs(prev => ({ ...prev, ...presets[name] }));
+    };
 
     // -- UI State --
     const [showAdvanced, setShowAdvanced] = useState(false);
@@ -53,78 +67,58 @@ const ClimateSimulator = () => {
         setInputs(prev => ({ ...prev, [key]: val }));
     };
 
-    const applyPreset = (type) => {
-        let newInputs = { ...inputs };
-        switch (type) {
-            case 'Baseline':
-                newInputs = { ...newInputs, capex: 30, opex: 0, annual_savings: 40, complexity: 30 };
-                break;
-            case 'Conservative':
-                newInputs = { ...newInputs, capex: 10, opex: 5, annual_savings: 20, complexity: 10, supply_risk: 10, reputation: 10 };
-                break;
-            case 'Balanced':
-                newInputs = { ...newInputs, capex: 50, opex: 0, annual_savings: 60, complexity: 40, supply_risk: 30 };
-                break;
-            case 'Aggressive':
-                newInputs = { ...newInputs, capex: 80, opex: -10, annual_savings: 90, complexity: 80, reputation: 80, supply_risk: 60 };
-                break;
-            default: break;
-        }
-        setInputs(newInputs);
-    };
-
     return (
         <div className="flex flex-col h-screen max-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-800 via-slate-950 to-black text-slate-100 overflow-hidden font-sans">
-            {/* -- Header -- */}
-            <header className="flex-none px-4 py-2 flex justify-between items-center z-20 border-b border-slate-800/50 bg-slate-900/50 backdrop-blur-sm h-12">
-                <div className="flex items-center gap-2">
-                    <div className="p-1.5 bg-indigo-500/20 rounded-lg border border-indigo-500/30">
-                        <Activity className="text-indigo-400 h-4 w-4" />
+            {/* -- Top Header Bar -- */}
+            <div className="h-12 border-b border-indigo-500/10 flex items-center justify-between px-6 bg-slate-900/40 backdrop-blur-md">
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                        <Activity className="text-white w-5 h-5" />
                     </div>
                     <div>
-                        <h1 className="text-lg font-bold tracking-tight text-white leading-none">
-                            SME Resilience <span className="text-gradient">Sim</span>
-                        </h1>
+                        <h1 className="text-sm font-black tracking-tighter text-slate-100 uppercase">SME Resilience Simulator</h1>
+                        <p className="text-[9px] font-bold text-indigo-400/60 uppercase tracking-widest leading-none">Strategic Decision Support</p>
                     </div>
                 </div>
 
-                {/* Presets */}
-                <div className="flex bg-slate-800/80 rounded-lg p-0.5 gap-0.5 border border-slate-700/50 shadow-inner">
-                    {['Baseline', 'Conservative', 'Balanced', 'Aggressive'].map(p => (
+                <div className="flex bg-slate-800/40 p-1 rounded-lg border border-slate-700/30 gap-1">
+                    {Object.keys(presets).map(p => (
                         <button
                             key={p}
                             onClick={() => applyPreset(p)}
-                            className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider rounded hover:bg-slate-700 text-slate-400 hover:text-white transition-all focus:bg-indigo-600 focus:text-white shadow-sm"
+                            className={`px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest transition-all ${activePreset === p
+                                ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20'
+                                : 'text-slate-500 hover:text-slate-300'
+                                }`}
                         >
                             {p}
                         </button>
                     ))}
                 </div>
-            </header>
+            </div>
 
             {/* -- Main Content -- */}
             <div className="flex-1 min-h-0 flex gap-2 p-2 overflow-hidden">
 
-                {/* -- Left Panel: Controls -- */}
-                <div className="w-[28%] flex flex-col glass-panel rounded-lg overflow-hidden animate-fade-in shrink-0" style={{ animationDelay: '0.1s' }}>
-                    <div className="px-3 py-2 border-b border-slate-700/50 bg-slate-800/30 flex justify-between items-center shrink-0">
-                        <h2 className="text-[10px] font-bold uppercase tracking-wider text-indigo-300 flex items-center gap-2">
-                            <Settings className="w-3 h-3" /> Config
-                        </h2>
+                {/* -- Left Panel: Sliders -- */}
+                <div className="w-[360px] flex-none flex flex-col glass-panel rounded-xl overflow-hidden border-indigo-500/10 shadow-2xl">
+                    <div className="px-5 py-4 border-b border-white/5 bg-slate-800/20 flex items-center gap-3">
+                        <Settings className="w-5 h-5 text-indigo-400" />
+                        <h2 className="text-[12px] font-black uppercase tracking-[0.3em] text-slate-300">Configuration</h2>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto px-3 py-2 space-y-4 customized-scrollbar">
+                    <div className="flex-1 overflow-y-auto px-6 py-6 space-y-8 customized-scrollbar">
                         {/* Dropdowns */}
-                        <div className="grid grid-cols-3 gap-1.5 mb-2">
+                        <div className="grid grid-cols-3 gap-2.5 mb-4">
                             {['industry', 'company_size', 'region'].map(field => (
-                                <div key={field} className="space-y-1">
-                                    <label className="text-[9px] uppercase font-bold text-slate-500 tracking-wider">
+                                <div key={field} className="space-y-2">
+                                    <label className="text-[10px] uppercase font-black text-slate-500 tracking-[0.15em]">
                                         {field.replace('_', ' ')}
                                     </label>
                                     <select
                                         value={inputs[field]}
                                         onChange={(e) => handleDropdownChange(field, e.target.value)}
-                                        className="w-full py-1.5 px-1.5 text-[9px] font-medium border border-slate-600 rounded bg-slate-700/50 text-slate-200 focus:border-indigo-500 outline-none transition-colors"
+                                        className="w-full py-2.5 px-3 text-[11px] font-bold border border-slate-600 rounded-lg bg-slate-700/50 text-slate-200 focus:border-indigo-500 outline-none transition-colors"
                                     >
                                         {field === 'industry' && <><option>Manufacturing</option><option>Services</option><option>Retail</option><option>Agri-food</option><option>Construction</option></>}
                                         {field === 'company_size' && <><option>Micro</option><option>SME</option><option>Mid</option></>}
@@ -134,13 +128,12 @@ const ClimateSimulator = () => {
                             ))}
                         </div>
 
-                        {/* BASIC Controls */}
-                        <div className="space-y-4">
+                        <div className="space-y-8">
                             <div>
-                                <h3 className="text-[9px] font-bold text-emerald-400 mb-2 flex items-center gap-1 uppercase tracking-wider">
-                                    <BarChart3 className="w-3 h-3" /> Economic
+                                <h3 className="text-[11px] font-black text-cyan-400 mb-6 flex items-center gap-3 uppercase tracking-[0.25em]">
+                                    <BarChart3 className="w-5 h-5" /> Economic Factors
                                 </h3>
-                                <div className="space-y-2">
+                                <div className="space-y-4">
                                     <SliderControl label="CAPEX Burden" value={inputs.capex} onChange={v => handleSliderChange('capex', v)} compact />
                                     <SliderControl label="OPEX Change" value={inputs.opex} min={-50} max={50} onChange={v => handleSliderChange('opex', v)} compact />
                                     <SliderControl label="Annual Savings" value={inputs.annual_savings} onChange={v => handleSliderChange('annual_savings', v)} compact />
@@ -148,21 +141,21 @@ const ClimateSimulator = () => {
                             </div>
 
                             <div>
-                                <h3 className="text-[9px] font-bold text-cyan-400 mb-2 flex items-center gap-1 uppercase tracking-wider">
-                                    <Globe className="w-3 h-3" /> Environmental
+                                <h3 className="text-[11px] font-black text-cyan-400 mb-6 flex items-center gap-3 uppercase tracking-[0.25em]">
+                                    <Globe className="w-5 h-5" /> Environmental
                                 </h3>
-                                <div className="space-y-2">
+                                <div className="space-y-4">
                                     <SliderControl label="Scope 1 Red." value={inputs.scope1} onChange={v => handleSliderChange('scope1', v)} compact />
                                     <SliderControl label="Scope 2 Red." value={inputs.scope2} onChange={v => handleSliderChange('scope2', v)} compact />
-                                    <SliderControl label="Waste Red." value={inputs.waste} onChange={v => handleSliderChange('waste', v)} compact />
+                                    <SliderControl label="Waste Reduction" value={inputs.waste} onChange={v => handleSliderChange('waste', v)} compact />
                                 </div>
                             </div>
 
                             <div>
-                                <h3 className="text-[9px] font-bold text-amber-400 mb-2 flex items-center gap-1 uppercase tracking-wider">
-                                    <Shield className="w-3 h-3" /> Strategic
+                                <h3 className="text-[11px] font-black text-amber-400 mb-6 flex items-center gap-3 uppercase tracking-[0.25em]">
+                                    <Shield className="w-5 h-5" /> Strategic
                                 </h3>
-                                <div className="space-y-2">
+                                <div className="space-y-4">
                                     <SliderControl label="Complexity" value={inputs.complexity} onChange={v => handleSliderChange('complexity', v)} compact />
                                     <SliderControl label="Supply Risk" value={inputs.supply_risk} onChange={v => handleSliderChange('supply_risk', v)} compact />
                                     <SliderControl label="Regulatory" value={inputs.regulatory} onChange={v => handleSliderChange('regulatory', v)} compact />
@@ -215,10 +208,10 @@ const ClimateSimulator = () => {
                 </div>
 
                 {/* -- Right Panel: Results -- */}
-                <div className="flex-1 flex flex-col gap-1.5 min-h-0 overflow-hidden">
+                <div className="flex-1 flex flex-col gap-3 min-h-0 overflow-hidden">
 
                     {/* Row 1: Scorecards */}
-                    <div className="grid grid-cols-4 gap-1.5 flex-none h-16">
+                    <div className="grid grid-cols-4 gap-3 flex-none h-28">
                         <ScoreCard title="Economic" score={outputs?.scores?.economic || 0} icon={BarChart3} color="blue" />
                         <ScoreCard title="Environmental" score={outputs?.scores?.environmental || 0} icon={Globe} color="green" />
                         <ScoreCard title="Strategic" score={outputs?.scores?.strategic || 0} icon={Shield} color="amber" />
@@ -226,22 +219,23 @@ const ClimateSimulator = () => {
                     </div>
 
                     {/* Row 2: Radar & Heatmap */}
-                    <div className="flex-none grid grid-cols-3 gap-1.5 h-40">
-                        <div className="col-span-2 h-full glass-panel rounded-lg p-1 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                    <div className="flex-none grid grid-cols-12 gap-3 h-64">
+                        <div className="col-span-8 h-full glass-panel rounded-xl p-0 animate-fade-in shadow-lg" style={{ animationDelay: '0.2s' }}>
                             <ImpactHeatmap cells={outputs?.heatmap} />
                         </div>
-                        <div className="col-span-1 h-full glass-panel rounded-lg p-2 flex flex-col items-center animate-fade-in" style={{ animationDelay: '0.3s' }}>
+                        <div className="col-span-4 h-full glass-panel rounded-xl p-6 flex flex-col items-center animate-fade-in shadow-lg" style={{ animationDelay: '0.3s' }}>
+                            <h3 className="w-full text-[12px] font-black text-slate-500 uppercase tracking-[0.25em] mb-6">Balance</h3>
                             <RadarPlot scores={outputs?.scores} />
                         </div>
                     </div>
 
-                    {/* Row 3: Alerts & Deep Metrics */}
-                    <div className="flex-1 min-h-0 grid grid-cols-2 gap-1.5 overflow-hidden pb-1">
-                        <div className="glass-panel rounded-lg p-3 animate-fade-in overflow-hidden relative" style={{ animationDelay: '0.4s' }}>
-                            <AlertBox alerts={outputs?.alerts} />
-                        </div>
-                        <div className="glass-panel rounded-lg p-3 animate-fade-in overflow-hidden relative" style={{ animationDelay: '0.5s' }}>
+                    {/* Row 3: Deep Metrics & Alerts */}
+                    <div className="flex-1 min-h-0 grid grid-cols-12 gap-3 overflow-hidden">
+                        <div className="col-span-8 glass-panel rounded-xl animate-fade-in overflow-hidden relative shadow-lg" style={{ animationDelay: '0.4s' }}>
                             <DeepMetricsPanel details={outputs?.details} />
+                        </div>
+                        <div className="col-span-4 glass-panel rounded-xl animate-fade-in overflow-hidden relative shadow-lg" style={{ animationDelay: '0.5s' }}>
+                            <AlertBox alerts={outputs?.alerts} />
                         </div>
                     </div>
 
