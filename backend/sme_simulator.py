@@ -36,12 +36,13 @@ class SmeSimulator:
         econ_score = self._clamp(round(50 + (roi * 20)))
         
         # Environmental Score: Based on efficiency gains AND mandatory Scope reduction potentials
-        # Map 0-100 inputs to score contribution
+        # Increased sensitivity to make UI changes more apparent
         efficiency_contrib = (i.energy_efficiency_pct + i.resource_efficiency_pct + i.waste_reduction_pct + i.circular_economy_pct) * 25
         scope_contrib = (i.scope_1_reduction + i.scope_2_reduction + i.scope_3_reduction) / 3
         carbon_contrib = i.carbon_reduction_potential
         
-        env_score = self._clamp(round(efficiency_contrib * 0.3 + scope_contrib * 0.4 + carbon_contrib * 0.3))
+        # New weights: 20% Efficiency, 40% Scope, 40% Carbon (emphasize mandatory docx requirements)
+        env_score = self._clamp(round(efficiency_contrib * 0.2 + scope_contrib * 0.4 + carbon_contrib * 0.4))
         
         # Strategic Score: Based on productivity, reputation, and disruption resilience
         strat_score = self._clamp(

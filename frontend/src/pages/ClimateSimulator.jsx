@@ -39,7 +39,14 @@ const ClimateSimulator = () => {
         discount_rate: 0.08,
         inflation_rate: 0.02,
         depreciation_years: 5,
-        wacc: 0.07
+        wacc: 0.07,
+
+        // Impact Potentials (instructions (1).docx Mandatory)
+        disruption_impact: 20,
+        carbon_reduction_potential: 25,
+        scope_1_reduction: 25,
+        scope_2_reduction: 25,
+        scope_3_reduction: 20
     });
 
     const [activePreset, setActivePreset] = useState("Baseline");
