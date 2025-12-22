@@ -19,7 +19,6 @@ class SmeSimulator:
         last = projections[-1]
         
         # Economic Score: Based on Cumulative ROI and NPV
-        # Map NPV > 0 to 50+, NPV > Initial Investment to 100
         total_inv = i.initial_capex + i.sustainability_capex + (sum(p.revenue_b for p in projections) * i.reinvest_pct)
         total_profit_b = sum(p.profit_b for p in projections)
         total_savings = sum(p.savings for p in projections)
@@ -34,46 +33,46 @@ class SmeSimulator:
             incremental_cf = (p.profit_b + p.savings) - p.profit_a
             npv += incremental_cf / ((1 + i.discount_rate) ** (t + 1))
 
-        econ_score = self._clamp(50 + (roi * 20)) # Simple mapping for now
+        econ_score = self._clamp(round(50 + (roi * 20)))
         
         # Environmental Score: Based on efficiency gains and green growth
         env_score = self._clamp(
-            (i.energy_efficiency_pct * 2 + 
+            round((i.energy_efficiency_pct * 2 + 
              i.resource_efficiency_pct * 2 + 
              i.waste_reduction_pct * 2 + 
              i.circular_economy_pct * 2 + 
-             i.green_market_access_pct * 5) * 10
+             i.green_market_access_pct * 5) * 10)
         )
         
         # Strategic Score: Based on productivity, reputation, and market access
         strat_score = self._clamp(
-            (i.reputation_uplift_pct * 3 + 
+            round((i.reputation_uplift_pct * 3 + 
              i.productivity_gain_pct * 3 + 
              i.turnover_reduction_pct * 2 + 
-             i.green_market_access_pct * 2) * 10
+             i.green_market_access_pct * 2) * 10)
         )
         
-        overall_score = (econ_score * 0.4 + env_score * 0.3 + strat_score * 0.3)
+        overall_score = round(econ_score * 0.4 + env_score * 0.3 + strat_score * 0.3)
 
         heatmap = self._calculate_heatmap(i, projections, econ_score, env_score, strat_score)
         alerts = self._generate_alerts(i, projections, econ_score, env_score, strat_score)
         
         details = SmeDeepIndicators(
-            financial_viability=self._clamp(50 + (npv / (i.sustainability_capex or 1)) * 50),
-            roi_percent=roi * 100,
-            payback_years=self._calculate_payback(i, projections),
-            carbon_reduction_tons=total_savings * 0.05, # Proxy for carbon
-            net_zero_progress=env_score,
+            financial_viability=self._clamp(round(50 + (npv / (i.sustainability_capex or 1)) * 50)),
+            roi_percent=round(roi * 100),
+            payback_years=round(self._calculate_payback(i, projections)),
+            carbon_reduction_tons=round(total_savings * 0.05), # Proxy for carbon
+            net_zero_progress=round(env_score),
             execution_risk_factor="Medium" if i.sustainability_capex > 50000 else "Low",
-            resilience_index=strat_score
+            resilience_index=round(strat_score)
         )
 
         return SmeOutputs(
             scores=SmeScore(
-                economic=econ_score,
-                environmental=env_score,
-                strategic=strat_score,
-                overall=overall_score
+                economic=float(econ_score),
+                environmental=float(env_score),
+                strategic=float(strat_score),
+                overall=float(overall_score)
             ),
             heatmap=heatmap,
             alerts=alerts,
@@ -99,9 +98,7 @@ class SmeSimulator:
             rev_b = rev_b * (1 + growth_b)
             
             # OPEX
-            # Traditional Costs
             opex_a = rev_a * i.variable_costs_pct + i.fixed_costs
-            # Sustainable Costs (before savings)
             opex_b = rev_b * i.variable_costs_pct + i.fixed_costs
             
             # Savings (Scenario B)
@@ -119,7 +116,6 @@ class SmeSimulator:
             profit_a = ebit_a - tax_a
             
             # Profit B
-            # Following docx-ish logic: EBITDA = Rev - Opex + Savings
             ebitda_b = rev_b - opex_b + savings
             ebit_b = ebitda_b - (depreciation if t <= i.depreciation_years else 0)
             tax_b = max(0, ebit_b * i.tax_rate)
@@ -127,14 +123,14 @@ class SmeSimulator:
             
             projections.append(YearlyProjection(
                 year=t,
-                revenue_a=rev_a,
-                revenue_b=rev_b,
-                opex_a=opex_a,
-                opex_b=opex_b,
-                profit_a=profit_a,
-                profit_b=profit_b,
-                savings=savings,
-                cumulative_investment=cum_inv_b
+                revenue_a=round(rev_a),
+                revenue_b=round(rev_b),
+                opex_a=round(opex_a),
+                opex_b=round(opex_b),
+                profit_a=round(profit_a),
+                profit_b=round(profit_b),
+                savings=round(savings),
+                cumulative_investment=round(cum_inv_b)
             ))
             
         return projections
@@ -155,17 +151,17 @@ class SmeSimulator:
     def _calculate_heatmap(self, i: SmeInputs, projections: List[YearlyProjection], econ: float, env: float, strat: float) -> List[HeatmapCell]:
         cells = []
         # Economic
-        cells.append(HeatmapCell(row='Economic', col='Upside', value=econ, color=self._get_color(econ)))
-        cells.append(HeatmapCell(row='Economic', col='Risk', value=i.sustainability_capex/1000, color=self._get_color(i.sustainability_capex/1000, invert=True)))
+        cells.append(HeatmapCell(row='Economic', col='Upside', value=round(econ), color=self._get_color(econ)))
+        cells.append(HeatmapCell(row='Economic', col='Risk', value=round(i.sustainability_capex/1000), color=self._get_color(i.sustainability_capex/1000, invert=True)))
         cells.append(HeatmapCell(row='Economic', col='Feasibility', value=75, color='green'))
         
         # Environmental
-        cells.append(HeatmapCell(row='Environmental', col='Upside', value=env, color=self._get_color(env)))
-        cells.append(HeatmapCell(row='Environmental', col='Risk', value=10, color='green')) # Static for now
+        cells.append(HeatmapCell(row='Environmental', col='Upside', value=round(env), color=self._get_color(env)))
+        cells.append(HeatmapCell(row='Environmental', col='Risk', value=10, color='green'))
         cells.append(HeatmapCell(row='Environmental', col='Feasibility', value=80, color='green'))
 
         # Strategic
-        cells.append(HeatmapCell(row='Strategic', col='Upside', value=strat, color=self._get_color(strat)))
+        cells.append(HeatmapCell(row='Strategic', col='Upside', value=round(strat), color=self._get_color(strat)))
         cells.append(HeatmapCell(row='Strategic', col='Risk', value=20, color='green'))
         cells.append(HeatmapCell(row='Strategic', col='Feasibility', value=90, color='green'))
         

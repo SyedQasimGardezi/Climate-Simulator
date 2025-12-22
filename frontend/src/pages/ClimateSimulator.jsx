@@ -125,8 +125,8 @@ const ClimateSimulator = () => {
                             <div className="grid grid-cols-2 gap-x-4 gap-y-4">
                                 <NumericInput label="Init. Revenue" value={inputs.initial_revenue} onChange={v => h('initial_revenue', v)} prefix="€" compact />
                                 <NumericInput label="Fixed Costs" value={inputs.fixed_costs} onChange={v => h('fixed_costs', v)} prefix="€" compact />
-                                <SliderControl label="Var. Costs" value={inputs.variable_costs_pct * 100} onChange={v => h('variable_costs_pct', v / 100)} suffix="%" compact />
-                                <SliderControl label="Rev. Growth" value={inputs.revenue_growth_rate * 100} onChange={v => h('revenue_growth_rate', v / 100)} suffix="%" compact />
+                                <SliderControl label="Var. Costs" value={Math.round(inputs.variable_costs_pct * 100)} onChange={v => h('variable_costs_pct', v / 100)} suffix="%" compact />
+                                <SliderControl label="Rev. Growth" value={Math.round(inputs.revenue_growth_rate * 100)} onChange={v => h('revenue_growth_rate', v / 100)} suffix="%" compact />
                             </div>
                         </div>
 
@@ -139,15 +139,15 @@ const ClimateSimulator = () => {
                             <div className="space-y-4">
                                 <h4 className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Efficiency Gains</h4>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <SliderControl label="Energy" value={inputs.energy_efficiency_pct * 100} onChange={v => h('energy_efficiency_pct', v / 100)} suffix="%" compact />
-                                    <SliderControl label="Waste" value={inputs.waste_reduction_pct * 100} onChange={v => h('waste_reduction_pct', v / 100)} suffix="%" compact />
+                                    <SliderControl label="Energy" value={Math.round(inputs.energy_efficiency_pct * 100)} onChange={v => h('energy_efficiency_pct', v / 100)} suffix="%" compact />
+                                    <SliderControl label="Waste" value={Math.round(inputs.waste_reduction_pct * 100)} onChange={v => h('waste_reduction_pct', v / 100)} suffix="%" compact />
                                 </div>
                             </div>
                             <div className="space-y-4">
                                 <h4 className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Market & Reputation</h4>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <SliderControl label="Reputation" value={inputs.reputation_uplift_pct * 100} onChange={v => h('reputation_uplift_pct', v / 100)} suffix="%" compact />
-                                    <SliderControl label="Green Market" value={inputs.green_market_access_pct * 100} onChange={v => h('green_market_access_pct', v / 100)} suffix="%" compact />
+                                    <SliderControl label="Reputation" value={Math.round(inputs.reputation_uplift_pct * 100)} onChange={v => h('reputation_uplift_pct', v / 100)} suffix="%" compact />
+                                    <SliderControl label="Green Market" value={Math.round(inputs.green_market_access_pct * 100)} onChange={v => h('green_market_access_pct', v / 100)} suffix="%" compact />
                                 </div>
                             </div>
                         </div>
@@ -165,10 +165,10 @@ const ClimateSimulator = () => {
                             {showAdvanced && (
                                 <div className="mt-4 space-y-4 pl-4 border-l border-indigo-500/20 animate-fade-in">
                                     <div className="grid grid-cols-2 gap-4">
-                                        <NumericInput label="Tax Rate" value={inputs.tax_rate * 100} onChange={v => h('tax_rate', v / 100)} suffix="%" compact />
-                                        <NumericInput label="Discount" value={inputs.discount_rate * 100} onChange={v => h('discount_rate', v / 100)} suffix="%" compact />
-                                        <NumericInput label="Depr. Years" value={inputs.depreciation_years} onChange={v => h('depreciation_years', v)} suffix="Y" compact />
-                                        <NumericInput label="Inflation" value={inputs.inflation_rate * 100} onChange={v => h('inflation_rate', v / 100)} suffix="%" compact />
+                                        <NumericInput label="Tax Rate" value={Math.round(inputs.tax_rate * 100)} onChange={v => h('tax_rate', v / 100)} suffix="%" compact />
+                                        <NumericInput label="Discount" value={Math.round(inputs.discount_rate * 100)} onChange={v => h('discount_rate', v / 100)} suffix="%" compact />
+                                        <NumericInput label="Depr. Years" value={Math.round(inputs.depreciation_years)} onChange={v => h('depreciation_years', v)} suffix="Y" compact />
+                                        <NumericInput label="Inflation" value={Math.round(inputs.inflation_rate * 100)} onChange={v => h('inflation_rate', v / 100)} suffix="%" compact />
                                     </div>
                                 </div>
                             )}
@@ -187,38 +187,41 @@ const ClimateSimulator = () => {
                         <ScoreCard title="Overall Score" score={outputs?.scores?.overall || 0} icon={Zap} isMain />
                     </div>
 
-                    {/* Row 2: Projection Charts */}
-                    <div className="flex-none grid grid-cols-2 gap-3 h-[340px]">
-                        <div className="glass-panel rounded-xl animate-fade-in shadow-xl bg-slate-900/40" style={{ animationDelay: '0.1s' }}>
+                    {/* Row 2: Projection Charts & Heatmap */}
+                    <div className="flex-none grid grid-cols-12 gap-3 h-[340px]">
+                        <div className="col-span-4 glass-panel rounded-xl animate-fade-in shadow-xl bg-slate-900/40" style={{ animationDelay: '0.1s' }}>
                             <ProjectionChart
                                 data={outputs?.projections}
-                                title="Revenue Projection"
+                                title="Revenue"
                                 dataKeyA="revenue_a"
                                 dataKeyB="revenue_b"
                             />
                         </div>
-                        <div className="glass-panel rounded-xl animate-fade-in shadow-xl bg-slate-900/40" style={{ animationDelay: '0.2s' }}>
+                        <div className="col-span-4 glass-panel rounded-xl animate-fade-in shadow-xl bg-slate-900/40" style={{ animationDelay: '0.2s' }}>
                             <ProjectionChart
                                 data={outputs?.projections}
-                                title="Net Profit Comparison"
+                                title="Net Profit"
                                 dataKeyA="profit_a"
                                 dataKeyB="profit_b"
                             />
                         </div>
+                        <div className="col-span-4 glass-panel rounded-xl animate-fade-in shadow-xl bg-slate-900/40" style={{ animationDelay: '0.3s' }}>
+                            <ImpactHeatmap cells={outputs?.heatmap} />
+                        </div>
                     </div>
 
-                    {/* Row 3: Deep Metrics & Heatmap/Alerts */}
+                    {/* Row 3: Deep Metrics & Balance/Alerts */}
                     <div className="flex-1 min-h-0 grid grid-cols-12 gap-3 overflow-hidden">
-                        <div className="col-span-12 glass-panel rounded-xl animate-fade-in overflow-hidden relative shadow-lg" style={{ animationDelay: '0.3s' }}>
+                        <div className="col-span-12 glass-panel rounded-xl animate-fade-in overflow-hidden relative shadow-lg" style={{ animationDelay: '0.4s' }}>
                             <div className="grid grid-cols-12 h-full">
-                                <div className="col-span-7 border-r border-white/5">
+                                <div className="col-span-8 border-r border-white/5">
                                     <DeepMetricsPanel details={outputs?.details} />
                                 </div>
-                                <div className="col-span-5 flex flex-col">
+                                <div className="col-span-4 flex flex-col">
                                     <div className="flex-1 border-b border-white/5 overflow-hidden">
                                         <AlertBox alerts={outputs?.alerts} />
                                     </div>
-                                    <div className="h-40 p-4">
+                                    <div className="h-44 p-4">
                                         <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Strategy Balance</h3>
                                         <RadarPlot scores={outputs?.scores} />
                                     </div>
@@ -232,7 +235,11 @@ const ClimateSimulator = () => {
 
             <style jsx>{`
                 .input-field {
-                    @apply bg-slate-800/60 border border-slate-700/50 rounded px-2 py-1.5 text-[11px] font-bold text-slate-200 focus:border-indigo-500 outline-none transition-all;
+                    @apply bg-slate-800/60 border border-slate-700/50 rounded px-2 py-1.5 text-[11px] font-black text-indigo-100 focus:border-indigo-500 outline-none transition-all cursor-pointer shadow-lg;
+                    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+                }
+                .input-field option {
+                    @apply bg-slate-900 text-indigo-100 font-bold py-2;
                 }
                 .glass-panel {
                     @apply bg-slate-900/60 backdrop-blur-xl border border-white/5;
