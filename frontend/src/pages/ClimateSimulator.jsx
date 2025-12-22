@@ -105,7 +105,7 @@ const ClimateSimulator = () => {
                                 <div className="space-y-1">
                                     <label className="text-[9px] uppercase font-black text-slate-500 tracking-wider">Industry</label>
                                     <select value={inputs.industry} onChange={e => h('industry', e.target.value)} className="input-field w-full">
-                                        {['Manufacturing', 'Services', 'Retail', 'Agri-food', 'Construction'].map(opt => <option key={opt}>{opt}</option>)}
+                                        {['Manufacturing', 'Services', 'Food', 'Logistics'].map(opt => <option key={opt}>{opt}</option>)}
                                     </select>
                                 </div>
                                 <div className="space-y-1">
@@ -152,7 +152,23 @@ const ClimateSimulator = () => {
                             </div>
                         </div>
 
-                        {/* 4. Advanced Settings */}
+                        {/* 4. Impact Potentials (instructions (1).docx Mandatory) */}
+                        <div className="space-y-6">
+                            <h3 className="text-[11px] font-black text-amber-400 mb-4 flex items-center gap-3 uppercase tracking-[0.25em]">
+                                <Zap className="w-4 h-4" /> Impact Potentials
+                            </h3>
+                            <div className="space-y-4">
+                                <SliderControl label="Disruption Impact" value={inputs.disruption_impact} onChange={v => h('disruption_impact', v)} suffix="" compact />
+                                <SliderControl label="Carbon Reduction" value={inputs.carbon_reduction_potential} onChange={v => h('carbon_reduction_potential', v)} suffix="%" compact />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <SliderControl label="Scope 1" value={inputs.scope_1_reduction} onChange={v => h('scope_1_reduction', v)} suffix="%" compact />
+                                    <SliderControl label="Scope 2" value={inputs.scope_2_reduction} onChange={v => h('scope_2_reduction', v)} suffix="%" compact />
+                                </div>
+                                <SliderControl label="Scope 3" value={inputs.scope_3_reduction} onChange={v => h('scope_3_reduction', v)} suffix="%" compact />
+                            </div>
+                        </div>
+
+                        {/* 5. Advanced Settings */}
                         <div className="pt-2 border-t border-slate-700/50">
                             <button
                                 onClick={() => setShowAdvanced(!showAdvanced)}

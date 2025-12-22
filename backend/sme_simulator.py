@@ -35,21 +35,21 @@ class SmeSimulator:
 
         econ_score = self._clamp(round(50 + (roi * 20)))
         
-        # Environmental Score: Based on efficiency gains and green growth
-        env_score = self._clamp(
-            round((i.energy_efficiency_pct * 2 + 
-             i.resource_efficiency_pct * 2 + 
-             i.waste_reduction_pct * 2 + 
-             i.circular_economy_pct * 2 + 
-             i.green_market_access_pct * 5) * 10)
-        )
+        # Environmental Score: Based on efficiency gains AND mandatory Scope reduction potentials
+        # Map 0-100 inputs to score contribution
+        efficiency_contrib = (i.energy_efficiency_pct + i.resource_efficiency_pct + i.waste_reduction_pct + i.circular_economy_pct) * 25
+        scope_contrib = (i.scope_1_reduction + i.scope_2_reduction + i.scope_3_reduction) / 3
+        carbon_contrib = i.carbon_reduction_potential
         
-        # Strategic Score: Based on productivity, reputation, and market access
+        env_score = self._clamp(round(efficiency_contrib * 0.3 + scope_contrib * 0.4 + carbon_contrib * 0.3))
+        
+        # Strategic Score: Based on productivity, reputation, and disruption resilience
         strat_score = self._clamp(
             round((i.reputation_uplift_pct * 3 + 
              i.productivity_gain_pct * 3 + 
              i.turnover_reduction_pct * 2 + 
-             i.green_market_access_pct * 2) * 10)
+             i.green_market_access_pct * 2 + 
+             (i.disruption_impact / 100)) * 10)
         )
         
         overall_score = round(econ_score * 0.4 + env_score * 0.3 + strat_score * 0.3)
@@ -61,9 +61,9 @@ class SmeSimulator:
             financial_viability=self._clamp(round(50 + (npv / (i.sustainability_capex or 1)) * 50)),
             roi_percent=round(roi * 100),
             payback_years=round(self._calculate_payback(i, projections)),
-            carbon_reduction_tons=round(total_savings * 0.05), # Proxy for carbon
+            carbon_reduction_tons=round(total_savings * 0.05 + (i.carbon_reduction_potential * 10)), # Weighted proxy
             net_zero_progress=round(env_score),
-            execution_risk_factor="Medium" if i.sustainability_capex > 50000 else "Low",
+            execution_risk_factor="High" if i.sustainability_capex > i.initial_revenue * 0.5 else ("Medium" if i.sustainability_capex > 50000 else "Low"),
             resilience_index=round(strat_score)
         )
 
@@ -152,34 +152,45 @@ class SmeSimulator:
         cells = []
         # Economic
         cells.append(HeatmapCell(row='Economic', col='Upside', value=round(econ), color=self._get_color(econ)))
-        cells.append(HeatmapCell(row='Economic', col='Risk', value=round(i.sustainability_capex/1000), color=self._get_color(i.sustainability_capex/1000, invert=True)))
-        cells.append(HeatmapCell(row='Economic', col='Feasibility', value=75, color='green'))
+        cells.append(HeatmapCell(row='Economic', col='Risk', value=round(i.sustainability_capex/10000), color=self._get_color(i.sustainability_capex/10000, invert=True)))
+        cells.append(HeatmapCell(row='Economic', col='Feasibility', value=round(75 - i.disruption_impact/4), color=self._get_color(75 - i.disruption_impact/4)))
         
         # Environmental
         cells.append(HeatmapCell(row='Environmental', col='Upside', value=round(env), color=self._get_color(env)))
-        cells.append(HeatmapCell(row='Environmental', col='Risk', value=10, color='green'))
-        cells.append(HeatmapCell(row='Environmental', col='Feasibility', value=80, color='green'))
+        cells.append(HeatmapCell(row='Environmental', col='Risk', value=round(100 - i.carbon_reduction_potential), color=self._get_color(100 - i.carbon_reduction_potential, invert=True)))
+        cells.append(HeatmapCell(row='Environmental', col='Feasibility', value=round(80 - i.scope_3_reduction/5), color=self._get_color(80 - i.scope_3_reduction/5)))
 
         # Strategic
         cells.append(HeatmapCell(row='Strategic', col='Upside', value=round(strat), color=self._get_color(strat)))
-        cells.append(HeatmapCell(row='Strategic', col='Risk', value=20, color='green'))
-        cells.append(HeatmapCell(row='Strategic', col='Feasibility', value=90, color='green'))
+        cells.append(HeatmapCell(row='Strategic', col='Risk', value=round(i.disruption_impact), color=self._get_color(i.disruption_impact, invert=True)))
+        cells.append(HeatmapCell(row='Strategic', col='Feasibility', value=round(90 - self.execution_risk(i)), color=self._get_color(90 - self.execution_risk(i))))
         
         return cells
+
+    def execution_risk(self, i: SmeInputs) -> float:
+        return (i.sustainability_capex / (i.initial_revenue or 1)) * 50
 
     def _generate_alerts(self, i: SmeInputs, projections: List[YearlyProjection], econ: float, env: float, strat: float) -> List[Alert]:
         alerts = []
         last = projections[-1]
         
-        if last.profit_b < last.profit_a:
-            alerts.append(Alert(message="Scenario B results in lower annual profit than Scenario A in the final year.", severity="high"))
+        # trade-off alerts from instructions (1).docx
+        if econ > 70 and env < 40:
+            alerts.append(Alert(message="Greenwashing Risk: High economic projection with low environmental impact scores.", severity="high"))
         
-        if i.sustainability_capex > i.initial_revenue * 2:
-            alerts.append(Alert(message="Sustainability investment is very high relative to initial revenue.", severity="medium"))
+        if env > 70 and econ < 40:
+            alerts.append(Alert(message="Financial Risk: Strong environmental results but weak economic sustainability.", severity="high"))
             
-        if econ > 70:
-            alerts.append(Alert(message="Strong economic potential detected for sustainable transition.", severity="low"))
+        if econ > 70 and env < 40: # Note: repeated in docx but slightly different wording
+             alerts.append(Alert(message="Strategic Risk: High economic growth without corresponding environmental transformation.", severity="medium"))
 
+        if econ > 70 and i.sustainability_capex > i.initial_revenue * 0.5:
+             alerts.append(Alert(message="Execution Risk: High complexity and investment relative to current revenue.", severity="medium"))
+
+        # Original alerts
+        if last.profit_b < last.profit_a:
+            alerts.append(Alert(message="Long-term Profitability Alert: Scenario B annual profit remains below Scenario A.", severity="medium"))
+            
         return alerts
 
     def _clamp(self, val: float) -> float:

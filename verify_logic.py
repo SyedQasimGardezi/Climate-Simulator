@@ -18,7 +18,12 @@ def test_simulator():
         revenue_growth_rate=0.0,
         green_market_access_pct=0.03,
         productivity_gain_pct=0.01524,
-        gov_subsidies=451.0
+        gov_subsidies=451.0,
+        disruption_impact=20.0,
+        carbon_reduction_potential=25.0,
+        scope_1_reduction=25.0,
+        scope_2_reduction=25.0,
+        scope_3_reduction=20.0
     )
     
     simulator = SmeSimulator()
