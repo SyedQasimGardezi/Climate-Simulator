@@ -235,11 +235,22 @@ const ClimateSimulator = () => {
 
             <style jsx>{`
                 .input-field {
-                    @apply bg-slate-800/60 border border-slate-700/50 rounded px-2 py-1.5 text-[11px] font-black text-indigo-100 focus:border-indigo-500 outline-none transition-all cursor-pointer shadow-lg;
-                    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+                    @apply bg-slate-900 border border-indigo-500/30 rounded px-3 py-2 text-[12px] font-black text-white focus:border-indigo-500 outline-none transition-all cursor-pointer shadow-xl;
+                    font-family: 'Inter', sans-serif;
+                    -webkit-appearance: none;
+                    -moz-appearance: none;
+                    appearance: none;
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23818cf8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+                    background-repeat: no-repeat;
+                    background-position: right 0.75rem center;
+                    background-size: 1rem;
+                    padding-right: 2.5rem;
                 }
                 .input-field option {
-                    @apply bg-slate-900 text-indigo-100 font-bold py-2;
+                    background-color: #0f172a !important;
+                    color: #ffffff !important;
+                    padding: 12px;
+                    font-weight: 700;
                 }
                 .glass-panel {
                     @apply bg-slate-900/60 backdrop-blur-xl border border-white/5;

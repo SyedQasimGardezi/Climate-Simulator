@@ -334,6 +334,7 @@ export const ProjectionChart = ({ data, title, dataKeyA, dataKeyB, labelA = "Tra
                             tickFormatter={formatYAxis}
                         />
                         <Tooltip
+                            formatter={(value) => [Math.round(value), ""]}
                             contentStyle={{
                                 backgroundColor: '#0f172a',
                                 border: '1px solid #334155',
