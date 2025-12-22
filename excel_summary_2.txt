@@ -1,0 +1,200 @@
+--- Summarizing Simulatorv2 (2).xlsm ---
+Sheets: ['Constants', 'Calculations', 'SliderControl', 'Slider value Setup', 'Simulator', 'Dashboard', 'Help', 'Project Audit', 'formula uses']
+
+--- Sheet: Constants ---
+          Sector  ...  Turnover Reduction
+0  Manufacturing  ...               0.060
+1       Services  ...               0.070
+2         Retail  ...               0.050
+3      Agri-food  ...               0.040
+4   Construction  ...               0.055
+
+[5 rows x 7 columns]
+
+--- Sheet: Calculations ---
+   Year  ...  Investment_B
+0     1  ...  39515.160000
+1     2  ...  40850.379200
+2     3  ...  42345.824704
+3     4  ...  44020.723668
+4     5  ...  45896.610509
+5     6  ...  47997.603770
+6     7  ...  50350.716222
+7     8  ...  52986.202169
+
+[8 rows x 21 columns]
+
+--- Sheet: SliderControl ---
+                                 Parameter  ...                                        Unnamed: 7
+0                          Initial Revenue  ...                                               NaN
+1                      Number of Employees  ...  Note: Pls do not change any values on this sheet
+2                   Fixed Costs (EUR/year)  ...                                               NaN
+3            Variable Costs (% of Revenue)  ...                                               NaN
+4                            Initial Capex  ...                                               NaN
+5                     Operating Margin (%)  ...                                               NaN
+6           Annual Revenue Growth Rate (%)  ...                                               NaN
+7          Annual Employee Growth Rate (%)  ...                                               NaN
+8                Forecast Horizon (5/7/10)  ...                                               NaN
+9                     Sustainability Capex  ...                                               NaN
+10  % Revenue Reinvested in Sustainability  ...                                               NaN
+11              Energy Efficiency (% Opex)  ...                                               NaN
+12  Resource Efficiency (% Variable Costs)  ...                                               NaN
+13                Waste Reduction (% Opex)  ...                                               NaN
+14            Circular Economy Savings (%)  ...                                               NaN
+15             Green Reputation Impact (%)  ...                                               NaN
+16             New Green Market Access (%)  ...                                               NaN
+17         Employee Turnover Reduction (%)  ...                                               NaN
+18                   Productivity Gain (%)  ...                                               NaN
+19       Gov. Subsidy (flat or % of Capex)  ...                                               NaN
+
+[20 rows x 8 columns]
+
+--- Sheet: Slider value Setup ---
+                                 Parameter  ...       Max.1
+0                          Initial Revenue  ...  100000.000
+1                      Number of Employees  ...      50.000
+2                   Fixed Costs (EUR/year)  ...  200000.000
+3            Variable Costs (% of Revenue)  ...       0.300
+4                            Initial Capex  ...  100000.000
+5                     Operating Margin (%)  ...       0.150
+6           Annual Revenue Growth Rate (%)  ...       0.050
+7          Annual Employee Growth Rate (%)  ...       0.030
+8                Forecast Horizon (5/7/10)  ...      10.000
+9                     Sustainability Capex  ...   10000.000
+10  % Revenue Reinvested in Sustainability  ...       0.020
+11              Energy Efficiency (% Opex)  ...       0.105
+12  Resource Efficiency (% Variable Costs)  ...       0.075
+13                Waste Reduction (% Opex)  ...       0.070
+14            Circular Economy Savings (%)  ...       0.020
+15             Green Reputation Impact (%)  ...       0.015
+16             New Green Market Access (%)  ...       0.030
+17         Employee Turnover Reduction (%)  ...       0.040
+18                   Productivity Gain (%)  ...       0.040
+19       Gov. Subsidy (flat or % of Capex)  ...    1000.000
+
+[20 rows x 21 columns]
+
+--- Sheet: Simulator ---
+    E N - R O A D   S I M U L A T O R  ...    Unnamed: 21
+0                                 NaN  ...            NaN
+1                                 NaN  ...            NaN
+2                                 NaN  ...            NaN
+3                                 NaN  ...  131774.297333
+4                                 NaN  ...  101884.968676
+5                                 NaN  ...   32025.261366
+6                                 NaN  ...   16811.019832
+7                                 NaN  ...       2.854465
+8                                 NaN  ...       6.000000
+9                                 NaN  ...   17235.817667
+10                                NaN  ...   17302.252234
+11                                NaN  ...            NaN
+12                                NaN  ...            NaN
+13                                NaN  ...            NaN
+14                                NaN  ...            NaN
+15                                NaN  ...            NaN
+16                                NaN  ...            NaN
+17                                NaN  ...            NaN
+18                                NaN  ...            NaN
+19                                NaN  ...            NaN
+
+[20 rows x 22 columns]
+
+--- Sheet: Dashboard ---
+                                    Sector  ...    Unnamed: 12
+0                          Initial Revenue  ...  131774.297333
+1                      Number of Employees  ...  101884.968676
+2                   Fixed Costs (EUR/year)  ...   32025.261366
+3            Variable Costs (% of Revenue)  ...   16811.019832
+4                            Initial Capex  ...       2.854465
+5                     Operating Margin (%)  ...       6.000000
+6           Annual Revenue Growth Rate (%)  ...   17235.817667
+7          Annual Employee Growth Rate (%)  ...   17302.252234
+8                Forecast Horizon (5/7/10)  ...            NaN
+9                     Sustainability Capex  ...            NaN
+10  % Revenue Reinvested in Sustainability  ...            NaN
+11              Energy Efficiency (% Opex)  ...            NaN
+12  Resource Efficiency (% Variable Costs)  ...            NaN
+13                Waste Reduction (% Opex)  ...            NaN
+14            Circular Economy Savings (%)  ...            NaN
+15             Green Reputation Impact (%)  ...            NaN
+16             New Green Market Access (%)  ...            NaN
+17         Employee Turnover Reduction (%)  ...            NaN
+18                   Productivity Gain (%)  ...            NaN
+19       Gov. Subsidy (flat or % of Capex)  ...            NaN
+
+[20 rows x 13 columns]
+
+--- Sheet: Help ---
+              Sustainability Simulator – Help & Guide  ...                          How to use this simulator
+0                                                 NaN  ...                                                NaN
+1                                  WHAT IS THIS TOOL?  ...  See the image on the right. These are the para...
+2   This simulator compares a baseline (Scenario A...  ...  The values next to each parameter changes as t...
+3                                                 NaN  ...  These values are default values provided with ...
+4                                   DASHBOARD INPUTS:  ...  The Min/Max range that this value belong to is...
+5   - Fill inputs in column B (green cells) like r...  ...                                                NaN
+6   - Scenario B includes additional investments a...  ...  So if you move slider to left most then these ...
+7                                                 NaN  ...                    from "Slider Value Setup" sheet
+8                          SCENARIO A vs. SCENARIO B:  ...                                                NaN
+9                        - A: Traditional growth only  ...  And if you move slider to right most then max ...
+10  - B: Includes green growth, cost savings, and ...  ...                                                NaN
+11                                                NaN  ...  IF you want to change min max values that slid...
+12                                       KEY METRICS:  ...  change col B and Col C (Min/Max) in "Slider Va...
+13            - Revenue: Grows based on rates defined  ...                                                NaN
+14  - Operating Costs: Calculated from fixed and v...  ...                                                NaN
+15  - Sustainability Savings: Only in Scenario B f...  ...                                    Simulator Sheet
+16        - ROI: Net gain divided by total investment  ...                                                NaN
+17  - Payback: First year when gains = total susta...  ...  Once the slider values have been setup then Yo...
+18                                                NaN  ...  to see effect of different values from min/max...
+19                                        NAVIGATION:  ...                                                NaN
+
+[20 rows x 3 columns]
+
+--- Sheet: Project Audit ---
+    Unnamed: 0  ...                                         Unnamed: 5
+0          NaN  ...                                                NaN
+1          NaN  ...                                                NaN
+2          NaN  ...                                                NaN
+3          NaN  ...                                                NaN
+4          NaN  ...                                              Notes
+5          NaN  ...  Revenue_A uses only Growth; Revenue_B includes...
+6          NaN  ...            Opex_A and Opex_B calculated separately
+7          NaN  ...    Only Scenario B has savings from sustainability
+8          NaN  ...                        Applied only for Scenario B
+9          NaN  ...  Only EBITDA_B calculated (Scenario A doesn’t i...
+10         NaN  ...                                Matches logic for B
+11         NaN  ...                  Used directly as Taxable_Income_B
+12         NaN  ...              Both calculated using correct formula
+13         NaN  ...             Incrementally summed from row 2 onward
+14         NaN  ...       Part of ROI calculation, dynamically tracked
+15         NaN  ...                   =SUM(F$2:Frow) logic implemented
+16         NaN  ...            Wrapped in IF to avoid division by zero
+17         NaN  ...                 Calculated per year and summarized
+18         NaN  ...       Used "Yes" flags + MATCH("Yes") on Dashboard
+19         NaN  ...                                                NaN
+
+[20 rows x 6 columns]
+
+--- Sheet: formula uses ---
+   ✅ Formula-by-Formula Validation  ...                                         Unnamed: 3
+0                              NaN  ...                                                NaN
+1                      Column Head  ...                                              Notes
+2                             Year  ...                              Static value; correct
+3                        Revenue_A  ...      Growth from initial revenue only (Scenario A)
+4                        Revenue_B  ...                 Growth + green market + reputation
+5                Operating_Costs_A  ...                         Revenue × var cost + fixed
+6                Operating_Costs_B  ...                         Same logic, with Revenue_B
+7           Sustainability_Savings  ...                     Opex_B × (sum of efficiency %)
+8                     Depreciation  ...  Uses Initial Capex (B6) and Depreciation Years...
+9                         EBITDA_B  ...          Revenue_B - Opex + Savings - Depreciation
+10                          EBIT_B  ...                              EBITDA - Depreciation
+11                Taxable_Income_B  ...                                Passed through EBIT
+12                    Net_Profit_A  ...                               Net profit after tax
+13                    Net_Profit_B  ...                               Net profit after tax
+14                 Cumulative_NP_A  ...                                  First year = NP_A
+15                 Cumulative_NP_B  ...                                  First year = NP_B
+16              Cumulative_Savings  ...                               First year = savings
+17                  Cumulative_ROI  ...     Uses Initial Capex + Reinvestment, matches PDF
+18                           NPV_A  ...                                    NP_A discounted
+19                           NPV_B  ...                                    NP_B discounted
+
+[20 rows x 4 columns]

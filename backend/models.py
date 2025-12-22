@@ -4,46 +4,41 @@ from typing import List, Optional
 # SME Simulator Models
 
 class SmeInputs(BaseModel):
-    # Basic - Economic (12 sliders)
-    capex: float = 30.0
-    opex: float = 0.0 # -50 to +50
-    annual_savings: float = 40.0
-    downtime: float = 20.0
-    
-    # Basic - Environmental
-    scope1: float = 25.0
-    scope2: float = 25.0
-    scope3: float = 20.0
-    waste: float = 20.0
-    
-    # Basic - Strategic
-    complexity: float = 30.0
-    supply_risk: float = 30.0
-    regulatory: float = 30.0
-    reputation: float = 25.0
-    
-    # Dropdowns
+    # Basic Business Info
     industry: str = "Manufacturing"
     company_size: str = "SME"
     region: str = "EU"
+    forecast_horizon: int = 7 # 5, 7, 10
+    
+    # Financial Baseline
+    initial_revenue: float = 10000.0
+    num_employees: int = 50
+    fixed_costs: float = 100000.0
+    variable_costs_pct: float = 0.02
+    initial_capex: float = 1000.0
+    operating_margin_pct: float = 0.0765
+    revenue_growth_rate: float = 0.0
+    employee_growth_rate: float = 0.01
 
-    # Advanced - Economic
-    wacc: float = 30.0
-    payback_tolerance: float = 50.0
-    incentives: float = 20.0
-    price_premium: float = 15.0
+    # Sustainability Strategy (Scenario B)
+    sustainability_capex: float = 6600.0
+    reinvest_pct: float = 0.005
+    energy_efficiency_pct: float = 0.0
+    resource_efficiency_pct: float = 0.0
+    waste_reduction_pct: float = 0.0
+    circular_economy_pct: float = 0.0
+    reputation_uplift_pct: float = 0.0
+    green_market_access_pct: float = 0.03
+    turnover_reduction_pct: float = 0.0
+    productivity_gain_pct: float = 0.015
+    gov_subsidies: float = 450.0
 
-    # Advanced - Environmental
-    water: float = 10.0
-    material: float = 15.0
-    pollutants: float = 10.0
-    measurement_confidence: float = 30.0
-
-    # Advanced - Strategic
-    capability: float = 30.0
-    supplier_concentration: float = 40.0
-    lead_time: float = 35.0
-    stakeholder: float = 30.0
+    # Economic Settings
+    tax_rate: float = 0.25
+    discount_rate: float = 0.08
+    inflation_rate: float = 0.02
+    depreciation_years: int = 5
+    wacc: float = 0.07 # Added for consistency with existing UI but and new logic
 
 class SmeScore(BaseModel):
     economic: float
@@ -70,8 +65,20 @@ class SmeDeepIndicators(BaseModel):
     execution_risk_factor: str # High/Med/Low
     resilience_index: float
 
+class YearlyProjection(BaseModel):
+    year: int
+    revenue_a: float
+    revenue_b: float
+    opex_a: float
+    opex_b: float
+    profit_a: float
+    profit_b: float
+    savings: float
+    cumulative_investment: float
+
 class SmeOutputs(BaseModel):
     scores: SmeScore
     heatmap: List[HeatmapCell]
     alerts: List[Alert]
     details: SmeDeepIndicators
+    projections: List[YearlyProjection]

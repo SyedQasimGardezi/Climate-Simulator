@@ -1,0 +1,71 @@
+I am seeking a highly skilled freelancer to develop an advanced, interactive business simulation tool that compares the financial performance of sustainable versus traditional business strategies over a 5 to 10-year horizon. 
+Project Overview: 
+Objective: Create a dynamic simulator that allows real-time comparison between two scenarios: (as far as I can see it’s not dynamic at all because if you put new inputs are bugged)
+Scenario A: Traditional business operations. 
+Scenario B: Integration of sustainability initiatives. 
+Platform Preference: Excel (with dynamic arrays), Google Sheets, or a no-code web application. 
+Inspiration: The En-ROADS Simulator by MIT Climate Interactive, known for its clean interface and real-time feedback. (there are not enough graphs as promised.)
+Key Requirements: 
+1. User Inputs: 
+Initial Revenue o 	Number of Employees o 	Fixed Costs (EUR/year) o 	Variable Costs (% of Revenue) o 	Initial Capital Expenditure (Capex) o 	Operating Margin (%) o 	Annual Revenue Growth Rate (%) o 	Annual Employee Growth Rate (%) o 	Forecast Horizon (5, 7, or 10 years) 
+2. Sustainability Investments (Scenario B only): 
+Sustainability Capex (one-time investment) o 	Percentage of Revenue Reinvested Annually in Sustainability o 	Annual Savings from: 
+Energy Efficiency (% of Operating Costs) 
+Resource Efficiency (% of Variable Costs) 
+Waste Reduction (% of Operating Costs) 
+Circular Economy Initiatives (% cost reduction) o 	Additional Revenue Uplift due to: 
+Green Reputation (% increase in Revenue Growth) 
+Access to New Green Markets (% added to Revenue) o 	Operational Metrics: 
+Reduction in Employee Turnover Rate (%) 
+Productivity Increase from Green Workplace (%) o Government Subsidies / Tax Incentives (flat value or % of Capex) 
+3. Advanced Financial Settings: 
+Corporate Tax Rate (%) o 	Discount Rate (%) for Net Present Value (NPV) o 	Inflation Rate (%) o 	Depreciation Period for Sustainability Investments (Years) 
+Processing Logic: 
+For each year in the forecast horizon, the simulator should calculate: 
+Revenue_t = Revenue_(t-1) × (1 + Growth Rate + Green Market Growth + Reputation Impact) 
+Operating Costs_t = Revenue_t × Variable Cost % + Fixed Costs 
+Savings_t = (Energy Saving + Resource Saving + Waste Reduction + Circular Economy Saving) × Operating Costs_t 
+Depreciation = Sustainability Capex / Depreciation Years 
+EBITDA_t = Revenue_t - Operating Costs_t + Sustainability Savings_t - Depreciation 
+EBIT_t = EBITDA_t - Depreciation 
+Taxable Income_t = EBIT_t 
+Net Profit_t = Taxable Income_t × (1 - Corporate Tax Rate) 
+Cumulative Net Profit = Sum of Net Profit_t 
+Cumulative Sustainability Investment = Initial Capex + Annual Sustainability Spending 
+Cumulative Savings = Sum of Sustainability Savings_t 
+Cumulative ROI = (Cumulative Net Profit + Cumulative Savings) / Cumulative Sustainability Investment 
+NPV = Sum(Net Profit_t / (1 + Discount Rate)^t) 
+Payback Year: Year when Cumulative Net Profit + Cumulative Savings ≥ Cumulative Sustainability Investment 
+Outputs: 
+Comparative Graphs (Scenario A vs. Scenario B): 
+Revenue over time o 	Operating Costs over time o 	Net Profit over time o 	Sustainability Savings over time o 	ROI over time o 	Payback Period visualization 
+Key Performance Indicators (KPIs): 
+Final ROI o 	Cumulative Net Profit o 	Total Sustainability Savings o 	Payback Year o 	NPV 
+Summary Text Outputs: 
+"Scenario B achieves payback in Year X." o 	"Cumulative Net Profit in Scenario B exceeds Scenario A by EUR Y after 10 years." o 	"ROI in Scenario B at Year 10 is Z% higher." You made this static, not good.
+Design Requirements: 
+Dashboard-style layout: 
+Left panel: Inputs o 	Right panel: Outputs (Graphs, KPIs) 
+Real-time updates without macros or external plugins. There are none working correctly.
+Inputs should utilize dropdowns and sliders where applicable. 
+Clean, professional, and minimalistic design inspired by En-ROADS. 
+Formulas must be protected (locked cells) in the final version. 
+Provide both: 
+Editable version (open) o 	Locked version (protected) 
+Deliverables: 
+Fully functioning simulator (Excel, Google Sheets, or Web App). 
+Editable source file. 
+Locked version for final use. 
+User manual (brief guide on how to use the simulator). 
+Timeline: 
+Please confirm feasibility based on this brief. 
+Provide estimated delivery time and fixed total cost. 
+Additional Notes: 
+The simulator must eliminate the need for manual estimation by offering intelligent defaults and dropdown selections. 
+e.g.  
+
+ 
+It must be interactive, highly intuitive, and visually clear to support SME managers in strategic sustainable investment decisions. 
+Design standard: En-ROADS — Clean, interactive, scenario-driven, no technical background required. 
+Looking forward to your proposal. 
+ 

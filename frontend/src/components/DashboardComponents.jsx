@@ -6,7 +6,13 @@ import {
     PolarAngleAxis,
     PolarRadiusAxis,
     Radar,
-    Tooltip
+    LineChart,
+    Line,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    Legend
 } from 'recharts';
 import { AlertTriangle, Info, CheckCircle, XCircle } from 'lucide-react';
 
@@ -275,6 +281,94 @@ export const DeepMetricsPanel = ({ details }) => {
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    );
+};
+
+export const NumericInput = ({ label, value, onChange, prefix = "", suffix = "", type = "number", compact = false }) => (
+    <div className="group w-full">
+        <label className={`block ${compact ? 'text-[10px]' : 'text-xs'} font-black text-slate-500 uppercase tracking-[0.15em] mb-1.5 group-hover:text-indigo-400 transition-colors`}>
+            {label}
+        </label>
+        <div className="relative">
+            {prefix && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-[11px]">{prefix}</span>}
+            <input
+                type={type}
+                value={value}
+                onChange={(e) => onChange(type === "number" ? parseFloat(e.target.value) || 0 : e.target.value)}
+                className={`w-full bg-slate-800/40 border border-slate-700/50 rounded-lg ${compact ? 'py-1.5' : 'py-2.5'} ${prefix ? 'pl-7' : 'pl-3'} pr-8 text-[11px] font-bold text-slate-200 outline-none focus:border-indigo-500 transition-all shadow-inner`}
+            />
+            {suffix && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-[11px]">{suffix}</span>}
+        </div>
+    </div>
+);
+
+export const ProjectionChart = ({ data, title, dataKeyA, dataKeyB, labelA = "Traditional", labelB = "Sustainable", prefix = "" }) => {
+    if (!data || data.length === 0) return null;
+
+    const formatYAxis = (tickItem) => {
+        if (tickItem >= 1000000) return `${(tickItem / 1000000).toFixed(1)}M`;
+        if (tickItem >= 1000) return `${(tickItem / 1000).toFixed(1)}K`;
+        return tickItem;
+    };
+
+    return (
+        <div className="h-full w-full flex flex-col p-4">
+            <h3 className="text-[12px] font-black text-slate-500 uppercase tracking-[0.25em] mb-4">{title}</h3>
+            <div className="flex-1 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                        <XAxis
+                            dataKey="year"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: '#64748b', fontSize: 10, fontWeight: 700 }}
+                            label={{ value: 'Years', position: 'insideBottom', offset: -5, fill: '#475569', fontSize: 10, fontWeight: 900, textAnchor: 'middle' }}
+                        />
+                        <YAxis
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: '#64748b', fontSize: 10, fontWeight: 700 }}
+                            tickFormatter={formatYAxis}
+                        />
+                        <Tooltip
+                            contentStyle={{
+                                backgroundColor: '#0f172a',
+                                border: '1px solid #334155',
+                                borderRadius: '8px',
+                                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.4)'
+                            }}
+                            labelStyle={{ color: '#94a3b8', fontWeight: 900, marginBottom: '5px' }}
+                        />
+                        <Legend
+                            verticalAlign="top"
+                            height={36}
+                            iconType="circle"
+                            wrapperStyle={{ fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}
+                        />
+                        <Line
+                            type="monotone"
+                            dataKey={dataKeyA}
+                            name={labelA}
+                            stroke="#94a3b8"
+                            strokeWidth={3}
+                            dot={{ fill: '#64748b', r: 4 }}
+                            activeDot={{ r: 6, strokeWidth: 0 }}
+                        />
+                        <Line
+                            type="monotone"
+                            dataKey={dataKeyB}
+                            name={labelB}
+                            stroke="#6366f1"
+                            strokeWidth={3}
+                            dot={{ fill: '#4f46e5', r: 4 }}
+                            activeDot={{ r: 6, strokeWidth: 0 }}
+                            animationDuration={1500}
+                        />
+                    </LineChart>
+                </ResponsiveContainer>
             </div>
         </div>
     );

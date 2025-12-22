@@ -1,42 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { calculateSmeImpact } from '../services/api';
-import { SliderControl, ScoreCard, ImpactHeatmap, RadarPlot, AlertBox, DeepMetricsPanel } from '../components/DashboardComponents';
-import { ChevronDown, ChevronUp, Settings, Activity, Zap, BarChart3, Globe, Shield, AlertTriangle, Info, CheckCircle, XCircle, CheckCircle2 } from 'lucide-react';
+import { NumericInput, SliderControl, ScoreCard, ImpactHeatmap, RadarPlot, AlertBox, DeepMetricsPanel, ProjectionChart } from '../components/DashboardComponents';
+import { ChevronDown, ChevronUp, Settings, Activity, Zap, BarChart3, Globe, Shield, AlertTriangle, TrendingUp, DollarSign, Leaf, Users } from 'lucide-react';
 
 const ClimateSimulator = () => {
     // -- Inputs State --
     const [inputs, setInputs] = useState({
-        // Basic - Economic
-        capex: 30, opex: 0, annual_savings: 40, downtime: 20,
-        // Basic - Environmental
-        scope1: 25, scope2: 25, scope3: 20, waste: 20,
-        // Basic - Strategic
-        complexity: 30, supply_risk: 30, regulatory: 30, reputation: 25,
-        // Dropdowns
-        industry: "Manufacturing", company_size: "SME", region: "EU",
-        // Advanced - Economic
-        wacc: 30, payback_tolerance: 50, incentives: 20, price_premium: 15,
-        // Advanced - Environmental
-        water: 10, material: 15, pollutants: 10, measurement_confidence: 30,
-        // Advanced - Strategic
-        capability: 30, supplier_concentration: 40, lead_time: 35, stakeholder: 30
+        // Basic Business Info
+        industry: "Manufacturing",
+        company_size: "SME",
+        region: "EU",
+        forecast_horizon: 7,
+
+        // Financial Baseline
+        initial_revenue: 1000000,
+        num_employees: 50,
+        fixed_costs: 200000,
+        variable_costs_pct: 0.4,
+        initial_capex: 50000,
+        revenue_growth_rate: 0.05,
+        employee_growth_rate: 0.02,
+
+        // Sustainability Strategy (Scenario B)
+        sustainability_capex: 100000,
+        reinvest_pct: 0.01,
+        energy_efficiency_pct: 0.15,
+        resource_efficiency_pct: 0.08,
+        waste_reduction_pct: 0.10,
+        circular_economy_pct: 0.05,
+        reputation_uplift_pct: 0.03,
+        green_market_access_pct: 0.05,
+        turnover_reduction_pct: 0.20,
+        productivity_gain_pct: 0.10,
+        gov_subsidies: 15000,
+
+        // Economic Settings
+        tax_rate: 0.25,
+        discount_rate: 0.08,
+        inflation_rate: 0.02,
+        depreciation_years: 5,
+        wacc: 0.07
     });
 
-    const presets = {
-        Baseline: { capex: 30, opex: 0, annual_savings: 40, scope1: 25, scope2: 25, scope3: 20, complexity: 30, reputation: 25, capability: 30 },
-        Conservative: { capex: 10, opex: 5, annual_savings: 15, scope1: 10, scope2: 10, scope3: 5, complexity: 10, reputation: 10, capability: 10 },
-        Balanced: { capex: 50, opex: 15, annual_savings: 60, scope1: 45, scope2: 40, scope3: 35, complexity: 50, reputation: 50, capability: 50 },
-        Aggressive: { capex: 85, opex: 30, annual_savings: 95, scope1: 90, scope2: 85, scope3: 80, complexity: 80, reputation: 90, capability: 90 }
-    };
-
     const [activePreset, setActivePreset] = useState("Baseline");
-
-    const applyPreset = (name) => {
-        setActivePreset(name);
-        setInputs(prev => ({ ...prev, ...presets[name] }));
-    };
-
-    // -- UI State --
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [outputs, setOutputs] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -59,11 +65,7 @@ const ClimateSimulator = () => {
     }, [inputs]);
 
     // -- Helpers --
-    const handleSliderChange = (key, val) => {
-        setInputs(prev => ({ ...prev, [key]: val }));
-    };
-
-    const handleDropdownChange = (key, val) => {
+    const h = (key, val) => {
         setInputs(prev => ({ ...prev, [key]: val }));
     };
 
@@ -76,130 +78,97 @@ const ClimateSimulator = () => {
                         <Activity className="text-white w-5 h-5" />
                     </div>
                     <div>
-                        <h1 className="text-sm font-black tracking-tighter text-slate-100 uppercase">SME Resilience Simulator</h1>
-                        <p className="text-[9px] font-bold text-indigo-400/60 uppercase tracking-widest leading-none">Strategic Decision Support</p>
+                        <h1 className="text-sm font-black tracking-tighter text-slate-100 uppercase">SME Resilience Simulator V2</h1>
+                        <p className="text-[9px] font-bold text-indigo-400/60 uppercase tracking-widest leading-none">Scenario-Driven Financial Analysis</p>
                     </div>
-                </div>
-
-                <div className="flex bg-slate-800/40 p-1 rounded-lg border border-slate-700/30 gap-1">
-                    {Object.keys(presets).map(p => (
-                        <button
-                            key={p}
-                            onClick={() => applyPreset(p)}
-                            className={`px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest transition-all ${activePreset === p
-                                ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20'
-                                : 'text-slate-500 hover:text-slate-300'
-                                }`}
-                        >
-                            {p}
-                        </button>
-                    ))}
                 </div>
             </div>
 
             {/* -- Main Content -- */}
             <div className="flex-1 min-h-0 flex gap-2 p-2 overflow-hidden">
 
-                {/* -- Left Panel: Sliders -- */}
-                <div className="w-[360px] flex-none flex flex-col glass-panel rounded-xl overflow-hidden border-indigo-500/10 shadow-2xl">
+                {/* -- Left Panel: Inputs -- */}
+                <div className="w-[380px] flex-none flex flex-col glass-panel rounded-xl overflow-hidden border-indigo-500/10 shadow-2xl">
                     <div className="px-5 py-4 border-b border-white/5 bg-slate-800/20 flex items-center gap-3">
                         <Settings className="w-5 h-5 text-indigo-400" />
-                        <h2 className="text-[12px] font-black uppercase tracking-[0.3em] text-slate-300">Configuration</h2>
+                        <h2 className="text-[12px] font-black uppercase tracking-[0.3em] text-slate-300">Parameters</h2>
                     </div>
 
                     <div className="flex-1 overflow-y-auto px-6 py-6 space-y-8 customized-scrollbar">
-                        {/* Dropdowns */}
-                        <div className="grid grid-cols-3 gap-2.5 mb-4">
-                            {['industry', 'company_size', 'region'].map(field => (
-                                <div key={field} className="space-y-2">
-                                    <label className="text-[10px] uppercase font-black text-slate-500 tracking-[0.15em]">
-                                        {field.replace('_', ' ')}
-                                    </label>
-                                    <select
-                                        value={inputs[field]}
-                                        onChange={(e) => handleDropdownChange(field, e.target.value)}
-                                        className="w-full py-2.5 px-3 text-[11px] font-bold border border-slate-600 rounded-lg bg-slate-700/50 text-slate-200 focus:border-indigo-500 outline-none transition-colors"
-                                    >
-                                        {field === 'industry' && <><option>Manufacturing</option><option>Services</option><option>Retail</option><option>Agri-food</option><option>Construction</option></>}
-                                        {field === 'company_size' && <><option>Micro</option><option>SME</option><option>Mid</option></>}
-                                        {field === 'region' && <><option>EU</option><option>Non-EU</option></>}
+
+                        {/* 1. General Info */}
+                        <div className="space-y-4">
+                            <h3 className="text-[11px] font-black text-indigo-400 mb-4 flex items-center gap-3 uppercase tracking-[0.25em]">
+                                <Users className="w-4 h-4" /> Company Profile
+                            </h3>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="space-y-1">
+                                    <label className="text-[9px] uppercase font-black text-slate-500 tracking-wider">Industry</label>
+                                    <select value={inputs.industry} onChange={e => h('industry', e.target.value)} className="input-field w-full">
+                                        {['Manufacturing', 'Services', 'Retail', 'Agri-food', 'Construction'].map(opt => <option key={opt}>{opt}</option>)}
                                     </select>
                                 </div>
-                            ))}
-                        </div>
-
-                        <div className="space-y-8">
-                            <div>
-                                <h3 className="text-[11px] font-black text-cyan-400 mb-6 flex items-center gap-3 uppercase tracking-[0.25em]">
-                                    <BarChart3 className="w-5 h-5" /> Economic Factors
-                                </h3>
-                                <div className="space-y-4">
-                                    <SliderControl label="CAPEX Burden" value={inputs.capex} onChange={v => handleSliderChange('capex', v)} compact />
-                                    <SliderControl label="OPEX Change" value={inputs.opex} min={-50} max={50} onChange={v => handleSliderChange('opex', v)} compact />
-                                    <SliderControl label="Annual Savings" value={inputs.annual_savings} onChange={v => handleSliderChange('annual_savings', v)} compact />
-                                </div>
-                            </div>
-
-                            <div>
-                                <h3 className="text-[11px] font-black text-cyan-400 mb-6 flex items-center gap-3 uppercase tracking-[0.25em]">
-                                    <Globe className="w-5 h-5" /> Environmental
-                                </h3>
-                                <div className="space-y-4">
-                                    <SliderControl label="Scope 1 Red." value={inputs.scope1} onChange={v => handleSliderChange('scope1', v)} compact />
-                                    <SliderControl label="Scope 2 Red." value={inputs.scope2} onChange={v => handleSliderChange('scope2', v)} compact />
-                                    <SliderControl label="Waste Reduction" value={inputs.waste} onChange={v => handleSliderChange('waste', v)} compact />
-                                </div>
-                            </div>
-
-                            <div>
-                                <h3 className="text-[11px] font-black text-amber-400 mb-6 flex items-center gap-3 uppercase tracking-[0.25em]">
-                                    <Shield className="w-5 h-5" /> Strategic
-                                </h3>
-                                <div className="space-y-4">
-                                    <SliderControl label="Complexity" value={inputs.complexity} onChange={v => handleSliderChange('complexity', v)} compact />
-                                    <SliderControl label="Supply Risk" value={inputs.supply_risk} onChange={v => handleSliderChange('supply_risk', v)} compact />
-                                    <SliderControl label="Regulatory" value={inputs.regulatory} onChange={v => handleSliderChange('regulatory', v)} compact />
+                                <div className="space-y-1">
+                                    <label className="text-[9px] uppercase font-black text-slate-500 tracking-wider">Horizon</label>
+                                    <select value={inputs.forecast_horizon} onChange={e => h('forecast_horizon', parseInt(e.target.value))} className="input-field w-full">
+                                        {[5, 7, 10].map(opt => <option key={opt} value={opt}>{opt} Years</option>)}
+                                    </select>
                                 </div>
                             </div>
                         </div>
 
-                        {/* ADVANCED Toggle */}
+                        {/* 2. Baseline Financials */}
+                        <div className="space-y-6">
+                            <h3 className="text-[11px] font-black text-emerald-400 mb-4 flex items-center gap-3 uppercase tracking-[0.25em]">
+                                <DollarSign className="w-4 h-4" /> Baseline Financials
+                            </h3>
+                            <div className="grid grid-cols-2 gap-x-4 gap-y-4">
+                                <NumericInput label="Init. Revenue" value={inputs.initial_revenue} onChange={v => h('initial_revenue', v)} prefix="€" compact />
+                                <NumericInput label="Fixed Costs" value={inputs.fixed_costs} onChange={v => h('fixed_costs', v)} prefix="€" compact />
+                                <SliderControl label="Var. Costs" value={inputs.variable_costs_pct * 100} onChange={v => h('variable_costs_pct', v / 100)} suffix="%" compact />
+                                <SliderControl label="Rev. Growth" value={inputs.revenue_growth_rate * 100} onChange={v => h('revenue_growth_rate', v / 100)} suffix="%" compact />
+                            </div>
+                        </div>
+
+                        {/* 3. Sustainability Strategy */}
+                        <div className="space-y-6">
+                            <h3 className="text-[11px] font-black text-indigo-400 mb-4 flex items-center gap-3 uppercase tracking-[0.25em]">
+                                <Leaf className="w-4 h-4" /> Sustainability Strategy
+                            </h3>
+                            <NumericInput label="Sustainability CAPEX" value={inputs.sustainability_capex} onChange={v => h('sustainability_capex', v)} prefix="€" />
+                            <div className="space-y-4">
+                                <h4 className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Efficiency Gains</h4>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <SliderControl label="Energy" value={inputs.energy_efficiency_pct * 100} onChange={v => h('energy_efficiency_pct', v / 100)} suffix="%" compact />
+                                    <SliderControl label="Waste" value={inputs.waste_reduction_pct * 100} onChange={v => h('waste_reduction_pct', v / 100)} suffix="%" compact />
+                                </div>
+                            </div>
+                            <div className="space-y-4">
+                                <h4 className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Market & Reputation</h4>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <SliderControl label="Reputation" value={inputs.reputation_uplift_pct * 100} onChange={v => h('reputation_uplift_pct', v / 100)} suffix="%" compact />
+                                    <SliderControl label="Green Market" value={inputs.green_market_access_pct * 100} onChange={v => h('green_market_access_pct', v / 100)} suffix="%" compact />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 4. Advanced Settings */}
                         <div className="pt-2 border-t border-slate-700/50">
                             <button
                                 onClick={() => setShowAdvanced(!showAdvanced)}
-                                className="flex items-center justify-between w-full py-1.5 px-2 bg-slate-800/40 border border-slate-700/50 rounded text-xs font-semibold hover:bg-slate-700/50 transition-all group"
+                                className="flex items-center justify-between w-full py-2 px-3 bg-slate-800/40 border border-slate-700/50 rounded-lg text-xs font-semibold hover:bg-slate-700/50 transition-all group"
                             >
-                                <span className="group-hover:text-indigo-400 transition-colors text-[9px] uppercase tracking-wider">Advanced</span>
-                                {showAdvanced ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                                <span className="group-hover:text-indigo-400 transition-colors tracking-widest uppercase text-[10px]">Financial Settings</span>
+                                {showAdvanced ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                             </button>
 
                             {showAdvanced && (
-                                <div className="mt-3 space-y-4 pl-2 border-l border-indigo-500/20 animate-fade-in pb-2">
-                                    <div>
-                                        <h3 className="text-[9px] font-bold text-slate-500 mb-1 uppercase">Econ Fine Tuning</h3>
-                                        <div className="space-y-1.5">
-                                            <SliderControl label="WACC" value={inputs.wacc} onChange={v => handleSliderChange('wacc', v)} compact />
-                                            <SliderControl label="Payback Tol." value={inputs.payback_tolerance} onChange={v => handleSliderChange('payback_tolerance', v)} compact />
-                                            <SliderControl label="Price Premium" value={inputs.price_premium} onChange={v => handleSliderChange('price_premium', v)} compact />
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <h3 className="text-[9px] font-bold text-slate-500 mb-1 uppercase">Env Footprint</h3>
-                                        <div className="space-y-1.5">
-                                            <SliderControl label="Water" value={inputs.water} onChange={v => handleSliderChange('water', v)} compact />
-                                            <SliderControl label="Material" value={inputs.material} onChange={v => handleSliderChange('material', v)} compact />
-                                            <SliderControl label="Data Conf." value={inputs.measurement_confidence} onChange={v => handleSliderChange('measurement_confidence', v)} compact />
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <h3 className="text-[9px] font-bold text-slate-500 mb-1 uppercase">Strategic Res.</h3>
-                                        <div className="space-y-1.5">
-                                            <SliderControl label="Capability" value={inputs.capability} onChange={v => handleSliderChange('capability', v)} compact />
-                                            <SliderControl label="Supplier Conc." value={inputs.supplier_concentration} onChange={v => handleSliderChange('supplier_concentration', v)} compact />
-                                            <SliderControl label="Stakeholder" value={inputs.stakeholder} onChange={v => handleSliderChange('stakeholder', v)} compact />
-                                        </div>
+                                <div className="mt-4 space-y-4 pl-4 border-l border-indigo-500/20 animate-fade-in">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <NumericInput label="Tax Rate" value={inputs.tax_rate * 100} onChange={v => h('tax_rate', v / 100)} suffix="%" compact />
+                                        <NumericInput label="Discount" value={inputs.discount_rate * 100} onChange={v => h('discount_rate', v / 100)} suffix="%" compact />
+                                        <NumericInput label="Depr. Years" value={inputs.depreciation_years} onChange={v => h('depreciation_years', v)} suffix="Y" compact />
+                                        <NumericInput label="Inflation" value={inputs.inflation_rate * 100} onChange={v => h('inflation_rate', v / 100)} suffix="%" compact />
                                     </div>
                                 </div>
                             )}
@@ -212,35 +181,72 @@ const ClimateSimulator = () => {
 
                     {/* Row 1: Scorecards */}
                     <div className="grid grid-cols-4 gap-3 flex-none h-28">
-                        <ScoreCard title="Economic" score={outputs?.scores?.economic || 0} icon={BarChart3} color="blue" />
-                        <ScoreCard title="Environmental" score={outputs?.scores?.environmental || 0} icon={Globe} color="green" />
-                        <ScoreCard title="Strategic" score={outputs?.scores?.strategic || 0} icon={Shield} color="amber" />
-                        <ScoreCard title="Overall" score={outputs?.scores?.overall || 0} icon={Zap} isMain />
+                        <ScoreCard title="Economic" score={outputs?.scores?.economic || 0} icon={DollarSign} color="blue" />
+                        <ScoreCard title="Environmental" score={outputs?.scores?.environmental || 0} icon={Leaf} color="green" />
+                        <ScoreCard title="Strategic" score={outputs?.scores?.strategic || 0} icon={TrendingUp} color="amber" />
+                        <ScoreCard title="Overall Score" score={outputs?.scores?.overall || 0} icon={Zap} isMain />
                     </div>
 
-                    {/* Row 2: Radar & Heatmap */}
-                    <div className="flex-none grid grid-cols-12 gap-3 h-80">
-                        <div className="col-span-7 h-full glass-panel rounded-xl p-0 animate-fade-in shadow-lg" style={{ animationDelay: '0.2s' }}>
-                            <ImpactHeatmap cells={outputs?.heatmap} />
+                    {/* Row 2: Projection Charts */}
+                    <div className="flex-none grid grid-cols-2 gap-3 h-[340px]">
+                        <div className="glass-panel rounded-xl animate-fade-in shadow-xl bg-slate-900/40" style={{ animationDelay: '0.1s' }}>
+                            <ProjectionChart
+                                data={outputs?.projections}
+                                title="Revenue Projection"
+                                dataKeyA="revenue_a"
+                                dataKeyB="revenue_b"
+                            />
                         </div>
-                        <div className="col-span-5 h-full glass-panel rounded-xl p-6 flex flex-col items-center animate-fade-in shadow-lg" style={{ animationDelay: '0.3s' }}>
-                            <h3 className="w-full text-[12px] font-black text-slate-500 uppercase tracking-[0.25em] mb-6">Balance</h3>
-                            <RadarPlot scores={outputs?.scores} />
+                        <div className="glass-panel rounded-xl animate-fade-in shadow-xl bg-slate-900/40" style={{ animationDelay: '0.2s' }}>
+                            <ProjectionChart
+                                data={outputs?.projections}
+                                title="Net Profit Comparison"
+                                dataKeyA="profit_a"
+                                dataKeyB="profit_b"
+                            />
                         </div>
                     </div>
 
-                    {/* Row 3: Deep Metrics & Alerts */}
+                    {/* Row 3: Deep Metrics & Heatmap/Alerts */}
                     <div className="flex-1 min-h-0 grid grid-cols-12 gap-3 overflow-hidden">
-                        <div className="col-span-8 glass-panel rounded-xl animate-fade-in overflow-hidden relative shadow-lg" style={{ animationDelay: '0.4s' }}>
-                            <DeepMetricsPanel details={outputs?.details} />
-                        </div>
-                        <div className="col-span-4 glass-panel rounded-xl animate-fade-in overflow-hidden relative shadow-lg" style={{ animationDelay: '0.5s' }}>
-                            <AlertBox alerts={outputs?.alerts} />
+                        <div className="col-span-12 glass-panel rounded-xl animate-fade-in overflow-hidden relative shadow-lg" style={{ animationDelay: '0.3s' }}>
+                            <div className="grid grid-cols-12 h-full">
+                                <div className="col-span-7 border-r border-white/5">
+                                    <DeepMetricsPanel details={outputs?.details} />
+                                </div>
+                                <div className="col-span-5 flex flex-col">
+                                    <div className="flex-1 border-b border-white/5 overflow-hidden">
+                                        <AlertBox alerts={outputs?.alerts} />
+                                    </div>
+                                    <div className="h-40 p-4">
+                                        <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Strategy Balance</h3>
+                                        <RadarPlot scores={outputs?.scores} />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                 </div>
             </div>
+
+            <style jsx>{`
+                .input-field {
+                    @apply bg-slate-800/60 border border-slate-700/50 rounded px-2 py-1.5 text-[11px] font-bold text-slate-200 focus:border-indigo-500 outline-none transition-all;
+                }
+                .glass-panel {
+                    @apply bg-slate-900/60 backdrop-blur-xl border border-white/5;
+                }
+                .customized-scrollbar::-webkit-scrollbar {
+                    width: 4px;
+                }
+                .customized-scrollbar::-webkit-scrollbar-track {
+                    @apply bg-transparent;
+                }
+                .customized-scrollbar::-webkit-scrollbar-thumb {
+                    @apply bg-slate-700/50 rounded-full hover:bg-slate-600/50;
+                }
+            `}</style>
         </div>
     );
 };
